@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head th:replace="fragments :: page_head('Brands - Shopme Admin', 'none')"></head>
+<body>
+<div class="container-fluid">
+    <div th:replace="navigation :: menu"></div>
+    <div>
+        <h2>Manage Categories</h2>
+        <a th:href="@{/brands/new}" class="fas fa-folder-plus fa-2x icon-dark mr-2"></a>
+        <a th:href="@{/brands/export/csv}" class="fas fa-file-csv fa-2x icon-dark mr-2"></a>
+    </div>
+    <div th:replace="fragments :: search_form_and_message()">
+    </div>
+    <div class="full-details">
+        <table class="table table-bordered table-striped table-hover table-responsive-xl">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Brand ID</th>
+                    <th>Logo</th>
+                        <th th:replace="fragments :: column_link('name', 'Brand Name', none)">
+                    <th>Categories</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            <div  class="less-details">
+                <tr th:each="brand : ${listBrands}">
+                    <td>[[${brand.id}]]</td>
+                    <td>
+                        <img th:src="@{${brand.logoPath}}" style="width: 100px" class="img-fluid"/>
+                    </td>
+                    <td>[[${brand.name}]]</td>
+                    <td>
+                        <th:block th:each="cat : ${brand.categories}">
+                            <span class="badge badge-secondary" th:text="${cat.name}"></span>
+                        </th:block>
+                    </td>
+                    <td>
+                        <div th:replace="fragments :: edit('brand', '/brands/edit/' + ${brand.id})"></div>
+                        &nbsp;
+                        <div th:replace="fragments :: delete('brand', ${brand.id},'/brands/delete/'+ ${brand.id}, true)"></div>
+                    </td>
+                </tr>
+            </div>
+            </tbody>
+
+        </table>
+    </div>
+    <div th:if="${keyword != null}" class="text-center">
+        <span>Search result does not show brands in form</span>
+        <div th:replace="fragments :: pagination('brands')"></div>
+    </div>
+    <th:block th:unless="${keyword != null}">
+        <div th:replace="fragments :: pagination('top level brands')"></div>
+    </th:block>
+    <div th:replace="modal_fragments :: confirm_modal"></div>
+    <div th:replace="fragments :: footer"></div>
+</div>
+<script th:src="@{/js/common_list.js}"></script>
+<script type="text/javascript">
+    function clearFilter(){
+        window.location = "[[@{/brands}]]";
+    }
+    $(document).ready(function (){
+        $(".link-delete").on("click", function (e){
+            e.preventDefault();
+            showDeleteConfirmModal($(this), 'brand');
+        });
+    });
+</script>
+</body>
+</html>
